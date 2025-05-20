@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Become an Artist - MetokTunes</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <div class="logo">
+                <h1>MetokTunes</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="browse.html">Browse</a></li>
+                <li><a href="search.html">Search</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+        </nav>
+
+        <main class="registration-main">
+            <div class="registration-content">
+                <h1>Become an Artist</h1>
+                <p class="subtitle">Join MetokTunes and share your music with the world</p>
+
+                <div class="registration-container">
+                    <form id="register-form">
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" placeholder="Enter your email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" placeholder="Create a password" required>
+                            <small>Minimum 6 characters</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="artist-name">Artist Name</label>
+                            <input type="text" id="artist-name" placeholder="Your artist name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="genre">Genre</label>
+                            <select id="genre" required>
+                                <option value="">Select your genre</option>
+                                <option value="pop">Pop</option>
+                                <option value="rock">Rock</option>
+                                <option value="hiphop">Hip Hop</option>
+                                <option value="electronic">Electronic</option>
+                                <option value="jazz">Jazz</option>
+                                <option value="rnb">R&B</option>
+                                <option value="country">Country</option>
+                                <option value="classical">Classical</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bio">Artist Bio</label>
+                            <textarea id="bio" placeholder="Tell us about yourself and your music" rows="4"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="profile-image">Profile Image</label>
+                            <input type="file" id="profile-image" accept="image/*">
+                            <small>Max file size: 5MB</small>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="message info">
+                                <p>One-time setup fee of $10 required after registration</p>
+                                <p>Includes unlimited profile access and song uploads</p>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Register & Continue</button>
+                    </form>
+
+                    <div class="registration-info">
+                        <h3>Why Join MetokTunes?</h3>
+                        <ul>
+                            <li>
+                                <i class="fas fa-globe"></i>
+                                <span>Global Reach</span>
+                                <p>Connect with listeners worldwide</p>
+                            </li>
+                            <li>
+                                <i class="fas fa-chart-line"></i>
+                                <span>Analytics</span>
+                                <p>Track your music's performance</p>
+                            </li>
+                            <li>
+                                <i class="fas fa-hand-holding-heart"></i>
+                                <span>Direct Support</span>
+                                <p>Receive direct support from fans</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="terms-section">
+                    <p>By registering, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>MetokTunes</h3>
+                    <p>Discover and support independent artists</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="browse.html">Browse Artists</a></li>
+                        <li><a href="search.html">Search Music</a></li>
+                        <li><a href="login.html">Login</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 MetokTunes. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Firebase configuration -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

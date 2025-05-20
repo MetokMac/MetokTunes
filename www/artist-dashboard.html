@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetokTunes - Artist Dashboard</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav-bottom">
+        <div class="nav-bottom-container">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="library.html" class="nav-item">
+                <i class="fas fa-music"></i>
+                <span>Library</span>
+            </a>
+            <a href="artists.html" class="nav-item active">
+                <i class="fas fa-user"></i>
+                <span>Artists</span>
+            </a>
+            <a href="radio.html" class="nav-item">
+                <i class="fas fa-broadcast-tower"></i>
+                <span>Radio</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <div class="profile-section">
+                <div class="profile-header">
+                    <img id="profile-image" src="https://via.placeholder.com/100" alt="Profile Picture">
+                    <div id="verification-badge" class="verification-badge" style="display: none;">
+                        <i class="fas fa-check-circle"></i>
+                        Verified
+                    </div>
+                    <div class="profile-info">
+                        <h2 id="artist-name">Loading...</h2>
+                        <p id="artist-genres">Genres</p>
+                    </div>
+                </div>
+                <nav class="dashboard-nav">
+                    <a href="#overview" class="nav-item active">
+                        <i class="fas fa-chart-line"></i>
+                        Overview
+                    </a>
+                    <a href="#music" class="nav-item">
+                        <i class="fas fa-music"></i>
+                        My Music
+                    </a>
+                    <a href="#stats" class="nav-item">
+                        <i class="fas fa-chart-bar"></i>
+                        Statistics
+                    </a>
+                    <a href="#profile" class="nav-item">
+                        <i class="fas fa-user-edit"></i>
+                        Edit Profile
+                    </a>
+                    <a href="#settings" class="nav-item">
+                        <i class="fas fa-cog"></i>
+                        Settings
+                    </a>
+                </nav>
+            </div>
+            <!-- Main Content -->
+            <main class="dashboard-content">
+                <!-- Overview Section -->
+                <section id="overview" class="dashboard-section active">
+                    <h2>Dashboard Overview</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <i class="fas fa-play"></i>
+                            <h3>Monthly Listeners</h3>
+                            <p id="monthly-listeners">Loading...</p>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-headphones"></i>
+                            <h3>Streams</h3>
+                            <p id="total-streams">Loading...</p>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-heart"></i>
+                            <h3>Saves</h3>
+                            <p id="total-saves">Loading...</p>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-users"></i>
+                            <h3>Followers</h3>
+                            <p id="total-followers">Loading...</p>
+                        </div>
+                    </div>
+
+                    <div class="charts-container">
+                        <div class="chart-card">
+                            <h3>Streams Over Time</h3>
+                            <canvas id="streams-chart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Top Songs</h3>
+                            <canvas id="top-songs-chart"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Music Section -->
+                <section id="music" class="dashboard-section">
+                    <h2>My Music</h2>
+                    <div class="music-actions">
+                        <button class="primary-button" id="upload-song">
+                            <i class="fas fa-upload"></i>
+                            Upload New Song
+                        </button>
+                        <button class="secondary-button" id="create-playlist">
+                            <i class="fas fa-plus"></i>
+                            Create Playlist
+                        </button>
+                    </div>
+                    <div class="music-grid" id="music-grid">
+                        <!-- Songs will be populated here -->
+                    </div>
+                </section>
+
+                <!-- Stats Section -->
+                <section id="stats" class="dashboard-section">
+                    <h2>Statistics</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>Demographics</h3>
+                            <canvas id="demographics-chart"></canvas>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Listening Time</h3>
+                            <canvas id="listening-time-chart"></canvas>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Top Countries</h3>
+                            <canvas id="countries-chart"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Profile Section -->
+                <section id="profile" class="dashboard-section">
+                    <h2>Edit Profile</h2>
+                    <div class="profile-edit-form">
+                        <div class="form-group">
+                            <label for="edit-bio">Bio</label>
+                            <textarea id="edit-bio" rows="4"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-location">Location</label>
+                            <input type="text" id="edit-location">
+                        </div>
+                        <button class="primary-button" id="save-profile">
+                            <i class="fas fa-save"></i>
+                            Save Changes
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Settings Section -->
+                <section id="settings" class="dashboard-section">
+                    <h2>Settings</h2>
+                    <div class="settings-grid">
+                        <div class="setting-item">
+                            <label class="setting-label">Dark Mode</label>
+                            <label class="switch">
+                                <input type="checkbox" id="dark-mode-toggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label class="setting-label">Email Notifications</label>
+                            <label class="switch">
+                                <input type="checkbox" id="email-notifications">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label class="setting-label">Push Notifications</label>
+                            <label class="switch">
+                                <input type="checkbox" id="push-notifications">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <button class="secondary-button" id="logout">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Logout
+                        </button>
+                    </div>
+                </section>
+            </main>
+                    Overview
+                </a>
+                <a href="#music" class="nav-item">
+                    <i class="fas fa-music"></i>
+                    My Music
+                </a>
+                <a href="#stats" class="nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    Statistics
+                </a>
+                <a href="#profile" class="nav-item">
+                    <i class="fas fa-user-edit"></i>
+                    Edit Profile
+                </a>
+                <a href="#settings" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-content">
+            <!-- Overview Section -->
+            <section id="overview" class="dashboard-section active">
+                <h2>Dashboard Overview</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-play"></i>
+                        <h3>Monthly Listeners</h3>
+                        <p id="monthly-listeners">Loading...</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-headphones"></i>
+                        <h3>Streams</h3>
+                        <p id="total-streams">Loading...</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-heart"></i>
+                        <h3>Saves</h3>
+                        <p id="total-saves">Loading...</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-users"></i>
+                        <h3>Followers</h3>
+                        <p id="total-followers">Loading...</p>
+                    </div>
+                </div>
+
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <h3>Streams Over Time</h3>
+                        <canvas id="streams-chart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Top Songs</h3>
+                        <canvas id="top-songs-chart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Music Section -->
+            <section id="music" class="dashboard-section">
+                <h2>My Music</h2>
+                <div class="music-actions">
+                    <button class="primary-button" id="upload-song">
+                        <i class="fas fa-upload"></i>
+                        Upload New Song
+                    </button>
+                    <button class="secondary-button" id="create-playlist">
+                        <i class="fas fa-plus"></i>
+                        Create Playlist
+                    </button>
+                </div>
+                <div class="music-grid" id="music-grid">
+                    <!-- Songs will be populated here -->
+                </div>
+            </section>
+
+            <!-- Stats Section -->
+            <section id="stats" class="dashboard-section">
+                <h2>Statistics</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Demographics</h3>
+                        <canvas id="demographics-chart"></canvas>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Listening Time</h3>
+                        <canvas id="listening-time-chart"></canvas>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Top Countries</h3>
+                        <canvas id="countries-chart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile Section -->
+            <section id="profile" class="dashboard-section">
+                <h2>Edit Profile</h2>
+                <div class="profile-edit-form">
+                    <div class="form-group">
+                        <label for="edit-bio">Bio</label>
+                        <textarea id="edit-bio" rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-location">Location</label>
+                        <input type="text" id="edit-location">
+                    </div>
+                    <button class="primary-button" id="save-profile">
+                        <i class="fas fa-save"></i>
+                        Save Changes
+                    </button>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="dashboard-section">
+                <h2>Settings</h2>
+                <div class="settings-grid">
+                    <div class="setting-item">
+                        <label class="setting-label">Dark Mode</label>
+                        <label class="switch">
+                            <input type="checkbox" id="dark-mode-toggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label class="setting-label">Email Notifications</label>
+                        <label class="switch">
+                            <input type="checkbox" id="email-notifications">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label class="setting-label">Push Notifications</label>
+                        <label class="switch">
+                            <input type="checkbox" id="push-notifications">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <button class="secondary-button" id="logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Firebase configuration -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-storage-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    <script type="module" src="firebase.js"></script>
+    <script>
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Get user data
+                const user = firebase.auth.currentUser;
+                const userDoc = await getDoc(doc(firebase.db, 'users', user.uid));
+                const userData = userDoc.data();
+
+                // Update profile info
+                updateProfileInfo(userData);
+                
+                // Initialize charts
+                initializeCharts();
+
+                // Load music
+                await loadMusic();
+
+                // Load statistics
+                await loadStatistics();
+
+                // Initialize event listeners
+                initializeEventListeners();
+
+            } catch (error) {
+                console.error('Error initializing dashboard:', error);
+                alert('Failed to load dashboard. Please try again.');
+            }
+        });
+
+        // Update profile info
+        function updateProfileInfo(data) {
+            document.getElementById('profile-image').src = data.artistProfile?.profilePicture || 'https://via.placeholder.com/100';
+            document.getElementById('artist-name').textContent = data.artistProfile?.artistName || 'Unknown Artist';
+            document.getElementById('artist-genres').textContent = data.artistProfile?.genres?.join(', ') || 'No genres set';
+        }
+
+        // Initialize charts
+        function initializeCharts() {
+            // Streams chart
+            new Chart(document.getElementById('streams-chart'), {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Streams',
+                        data: [0, 0, 0, 0, 0, 0],
+                        borderColor: '#4CAF50',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Top songs chart
+            new Chart(document.getElementById('top-songs-chart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Song 1', 'Song 2', 'Song 3', 'Song 4', 'Song 5'],
+                    datasets: [{
+                        label: 'Plays',
+                        data: [0, 0, 0, 0, 0],
+                        backgroundColor: '#4CAF50'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        // Load music
+        async function loadMusic() {
+            const musicGrid = document.getElementById('music-grid');
+            const songsRef = collection(firebase.db, 'songs');
+            const q = query(songsRef, where('artistId', '==', firebase.auth.currentUser.uid));
+            const snapshot = await getDocs(q);
+
+            snapshot.forEach(doc => {
+                const song = doc.data();
+                const songCard = createSongCard(song);
+                musicGrid.appendChild(songCard);
+            });
+        }
+
+        // Create song card
+        function createSongCard(song) {
+            const card = document.createElement('div');
+            card.className = 'song-card';
+            card.innerHTML = `
+                <img src="${song.coverArt || 'https://via.placeholder.com/200'}" alt="${song.title}">
+                <div class="song-info">
+                    <h3>${song.title}</h3>
+                    <p>${song.album || 'Single'}</p>
+                </div>
+                <div class="song-stats">
+                    <span><i class="fas fa-play"></i> ${song.streams || 0}</span>
+                    <span><i class="fas fa-heart"></i> ${song.saves || 0}</span>
+                </div>
+                <div class="song-actions">
+                    <button class="edit-btn" data-id="${doc.id}">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="delete-btn" data-id="${doc.id}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `;
+            return card;
+        }
+
+        // Load statistics
+        async function loadStatistics() {
+            // Update stats
+            document.getElementById('monthly-listeners').textContent = 'Loading...';
+            document.getElementById('total-streams').textContent = 'Loading...';
+            document.getElementById('total-saves').textContent = 'Loading...';
+            document.getElementById('total-followers').textContent = 'Loading...';
+
+            // Update charts with sample data
+            // In a real implementation, this would come from Firestore
+            const streamsChart = document.getElementById('streams-chart').getContext('2d').chart;
+            streamsChart.data.datasets[0].data = [1200, 1900, 1500, 1700, 1800, 2000];
+            streamsChart.update();
+
+            const topSongsChart = document.getElementById('top-songs-chart').getContext('2d').chart;
+            topSongsChart.data.datasets[0].data = [500, 300, 400, 200, 150];
+            topSongsChart.update();
+        }
+
+        // Initialize event listeners
+        function initializeEventListeners() {
+            // Section navigation
+            const navItems = document.querySelectorAll('.dashboard-nav .nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    navItems.forEach(i => i.classList.remove('active'));
+                    e.currentTarget.classList.add('active');
+                    
+                    const sections = document.querySelectorAll('.dashboard-section');
+                    sections.forEach(section => {
+                        section.classList.remove('active');
+                        if (section.id === e.currentTarget.getAttribute('href').substring(1)) {
+                            section.classList.add('active');
+                        }
+                    });
+                });
+            });
+
+            // Upload song
+            document.getElementById('upload-song').addEventListener('click', () => {
+                window.location.href = 'upload-song.html';
+            });
+
+            // Create playlist
+            document.getElementById('create-playlist').addEventListener('click', () => {
+                window.location.href = 'create-playlist.html';
+            });
+
+            // Save profile
+            document.getElementById('save-profile').addEventListener('click', async () => {
+                try {
+                    const bio = document.getElementById('edit-bio').value;
+                    const location = document.getElementById('edit-location').value;
+                    
+                    await updateDoc(doc(firebase.db, 'users', firebase.auth.currentUser.uid), {
+                        artistProfile: {
+                            ...firebase.auth.currentUser.artistProfile,
+                            bio,
+                            location
+                        }
+                    });
+                    alert('Profile updated successfully!');
+                } catch (error) {
+                    console.error('Error saving profile:', error);
+                    alert('Failed to save profile. Please try again.');
+                }
+            });
+
+            // Logout
+            document.getElementById('logout').addEventListener('click', async () => {
+                try {
+                    await firebase.signOut();
+                    window.location.href = 'login.html';
+                } catch (error) {
+                    console.error('Error logging out:', error);
+                    alert('Failed to logout. Please try again.');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

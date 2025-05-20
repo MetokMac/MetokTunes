@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetokTunes - Upload Song</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div id="particles-js"></div>
+    <div class="login-container">
+        <div class="login-card">
+            <h1>Upload New Song</h1>
+            <div class="login-form">
+                <!-- Song Information -->
+                <div class="form-section">
+                    <h3>Song Information</h3>
+                    <div class="form-group">
+                        <label for="title">Song Title</label>
+                        <input type="text" id="title" placeholder="Enter song title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="album">Album</label>
+                        <input type="text" id="album" placeholder="Enter album name">
+                    </div>
+                    <div class="form-group">
+                        <label for="year">Release Year</label>
+                        <input type="number" id="year" placeholder="Year" min="1900" max="2099" required>
+                    </div>
+                </div>
+
+                <!-- Audio File -->
+                <div class="form-section">
+                    <h3>Audio File</h3>
+                    <div class="file-upload-container">
+                        <div class="file-upload-preview">
+                            <i class="fas fa-music"></i>
+                            <div class="file-info">
+                                <span id="fileName">No file selected</span>
+                                <span id="fileSize">0 KB</span>
+                            </div>
+                        </div>
+                        <label for="audioFile" class="upload-label">
+                            <i class="fas fa-upload"></i>
+                            Choose Audio File
+                        </label>
+                        <input type="file" id="audioFile" accept="audio/*" style="display: none;">
+                    </div>
+                </div>
+
+                <!-- Cover Art -->
+                <div class="form-section">
+                    <h3>Cover Art</h3>
+                    <div class="cover-art-container">
+                        <div class="cover-preview">
+                            <img id="coverPreview" src="https://via.placeholder.com/300" alt="Cover Art">
+                        </div>
+                        <label for="coverArt" class="upload-label">
+                            <i class="fas fa-image"></i>
+                            Choose Cover Art
+                        </label>
+                        <input type="file" id="coverArt" accept="image/*" style="display: none;">
+                    </div>
+                </div>
+
+                <!-- Song Details -->
+                <div class="form-section">
+                    <h3>Song Details</h3>
+                    <div class="form-group">
+                        <label for="genre">Genre</label>
+                        <select id="genre" multiple>
+                            <option value="pop">Pop</option>
+                            <option value="rock">Rock</option>
+                            <option value="hiphop">Hip Hop</option>
+                            <option value="electronic">Electronic</option>
+                            <option value="jazz">Jazz</option>
+                            <option value="country">Country</option>
+                            <option value="rnb">R&B</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="lyrics">Lyrics</label>
+                        <textarea id="lyrics" rows="6" placeholder="Enter song lyrics"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="explicit">Explicit Content</label>
+                        <div class="switch">
+                            <input type="checkbox" id="explicit">
+                            <span class="slider"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Release Options -->
+                <div class="form-section">
+                    <h3>Release Options</h3>
+                    <div class="form-group">
+                        <label for="releaseDate">Release Date</label>
+                        <input type="date" id="releaseDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="isSingle">Single</label>
+                        <div class="switch">
+                            <input type="checkbox" id="isSingle">
+                            <span class="slider"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button class="primary-button" id="upload-btn">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    Upload Song
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase configuration -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-storage-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    <script type="module" src="firebase.js"></script>
+    <script>
+        // Initialize upload functionality
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Check if user is authenticated
+                if (!firebase.auth.currentUser) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // Audio file upload
+                const audioFileInput = document.getElementById('audioFile');
+                const audioPreview = document.querySelector('.file-upload-preview');
+
+                audioFileInput.addEventListener('change', async (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const fileSize = (file.size / 1024).toFixed(2);
+                        document.getElementById('fileName').textContent = file.name;
+                        document.getElementById('fileSize').textContent = `${fileSize} KB`;
+                        
+                        // Validate file type
+                        if (!file.type.startsWith('audio/')) {
+                            alert('Please select a valid audio file');
+                            return;
+                        }
+                        
+                        // Validate file size (max 50MB)
+                        if (file.size > 50 * 1024 * 1024) {
+                            alert('File size must be less than 50MB');
+                            return;
+                        }
+                    }
+                });
+
+                // Cover art upload
+                const coverArtInput = document.getElementById('coverArt');
+                const coverPreview = document.getElementById('coverPreview');
+
+                coverArtInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            coverPreview.src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                // Genre selection
+                const genreSelect = document.getElementById('genre');
+                genreSelect.addEventListener('change', () => {
+                    const selected = Array.from(genreSelect.selectedOptions)
+                        .map(option => option.value);
+                    console.log('Selected genres:', selected);
+                });
+
+                // Upload button
+                document.getElementById('upload-btn').addEventListener('click', async () => {
+                    try {
+                        // Get form data
+                        const title = document.getElementById('title').value;
+                        const album = document.getElementById('album').value;
+                        const year = document.getElementById('year').value;
+                        const audioFile = document.getElementById('audioFile').files[0];
+                        const coverFile = document.getElementById('coverArt').files[0];
+                        const selectedGenres = Array.from(document.getElementById('genre').selectedOptions)
+                            .map(option => option.value);
+                        const lyrics = document.getElementById('lyrics').value;
+                        const explicit = document.getElementById('explicit').checked;
+                        const releaseDate = document.getElementById('releaseDate').value;
+                        const isSingle = document.getElementById('isSingle').checked;
+
+                        if (!title || !year || !audioFile || !releaseDate) {
+                            alert('Please fill in all required fields');
+                            return;
+                        }
+
+                        // Show loading state
+                        document.getElementById('upload-btn').disabled = true;
+                        document.getElementById('upload-btn').innerHTML = `
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Uploading...
+                        `;
+
+                        // Upload audio file
+                        const audioRef = ref(firebase.storage, `songs/${audioFile.name}`);
+                        const audioSnapshot = await uploadBytes(audioRef, audioFile);
+                        const audioUrl = await getDownloadURL(audioSnapshot.ref);
+
+                        // Upload cover art if provided
+                        let coverUrl = null;
+                        if (coverFile) {
+                            const coverRef = ref(firebase.storage, `covers/${coverFile.name}`);
+                            const coverSnapshot = await uploadBytes(coverRef, coverFile);
+                            coverUrl = await getDownloadURL(coverSnapshot.ref);
+                        }
+
+                        // Create song document
+                        const songData = {
+                            title,
+                            album: album || 'Single',
+                            artistId: firebase.auth.currentUser.uid,
+                            artistName: firebase.auth.currentUser.artistProfile.artistName,
+                            year: parseInt(year),
+                            audioUrl,
+                            coverArt: coverUrl,
+                            genres: selectedGenres,
+                            lyrics,
+                            explicit,
+                            releaseDate,
+                            isSingle,
+                            createdAt: new Date(),
+                            updatedAt: new Date(),
+                            streams: 0,
+                            saves: 0,
+                            likes: 0,
+                            comments: []
+                        };
+
+                        // Add song to Firestore
+                        await addDoc(collection(firebase.db, 'songs'), songData);
+
+                        // Reset form
+                        document.getElementById('upload-btn').disabled = false;
+                        document.getElementById('upload-btn').innerHTML = `
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            Upload Song
+                        `;
+                        document.getElementById('uploadForm').reset();
+                        audioPreview.innerHTML = `
+                            <i class="fas fa-music"></i>
+                            <div class="file-info">
+                                <span id="fileName">No file selected</span>
+                                <span id="fileSize">0 KB</span>
+                            </div>
+                        `;
+                        coverPreview.src = 'https://via.placeholder.com/300';
+
+                        // Redirect to dashboard
+                        alert('Song uploaded successfully!');
+                        window.location.href = 'artist-dashboard.html';
+
+                    } catch (error) {
+                        console.error('Error uploading song:', error);
+                        alert('Failed to upload song. Please try again.');
+                        document.getElementById('upload-btn').disabled = false;
+                        document.getElementById('upload-btn').innerHTML = `
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            Upload Song
+                        `;
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error initializing upload page:', error);
+                alert('Failed to load upload page. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>

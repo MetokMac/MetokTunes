@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetokTunes - Complete Artist Profile</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div id="particles-js"></div>
+    <div class="login-container">
+        <div class="login-card">
+            <h1>Complete Your Artist Profile</h1>
+            <div class="disclaimer">
+                <p><strong>Important Notice:</strong> To verify your artist status and ensure content ownership, a one-time $10 payment is required to complete your profile setup. This payment helps us maintain the integrity of our platform and supports our mission to connect artists with their fans.</p>
+            </div>
+            <div class="login-form">
+                <div class="profile-picture-section">
+                    <div class="profile-picture-container">
+                        <img id="profile-preview" src="https://via.placeholder.com/200" alt="Profile Picture">
+                        <label for="profile-picture" class="upload-label">
+                            <i class="fas fa-camera"></i>
+                            Upload Profile Picture
+                        </label>
+                        <input type="file" id="profile-picture" accept="image/*" style="display: none;">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="artistName">Artist Name</label>
+                    <input type="text" id="artistName" placeholder="Enter your artist name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="bio">Bio</label>
+                    <textarea id="bio" placeholder="Tell us about yourself and your music..." rows="5"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" id="location" placeholder="City, Country">
+                </div>
+
+                <div class="form-group">
+                    <label for="website">Website</label>
+                    <input type="url" id="website" placeholder="https://yourwebsite.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="socialLinks">Social Links</label>
+                    <div class="social-links-container">
+                        <div class="social-link">
+                            <select id="socialType1">
+                                <option value="">Select platform</option>
+                                <option value="instagram">Instagram</option>
+                                <option value="facebook">Facebook</option>
+                                <option value="twitter">Twitter</option>
+                                <option value="tiktok">TikTok</option>
+                                <option value="youtube">YouTube</option>
+                            </select>
+                            <input type="text" id="socialUrl1" placeholder="Username or URL">
+                            <button class="add-social-btn">Add More</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Genres</label>
+                    <div class="genre-chips">
+                        <div class="chip" data-genre="pop">Pop</div>
+                        <div class="chip" data-genre="rock">Rock</div>
+                        <div class="chip" data-genre="hiphop">Hip Hop</div>
+                        <div class="chip" data-genre="electronic">Electronic</div>
+                        <div class="chip" data-genre="jazz">Jazz</div>
+                        <div class="chip" data-genre="country">Country</div>
+                        <div class="chip" data-genre="rnb">R&B</div>
+                        <div class="chip" data-genre="other">Other</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Music Style</label>
+                    <div class="music-style-container">
+                        <div class="music-style-option">
+                            <input type="radio" id="solo" name="musicStyle" value="solo">
+                            <label for="solo">Solo Artist</label>
+                        </div>
+                        <div class="music-style-option">
+                            <input type="radio" id="band" name="musicStyle" value="band">
+                            <label for="band">Band</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Band Members (if applicable)</label>
+                    <div class="band-members-container">
+                        <div class="band-member">
+                            <input type="text" placeholder="Member Name">
+                            <input type="text" placeholder="Role">
+                            <button class="add-member-btn">Add Member</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="payment-section">
+                    <h3>Verify Your Artist Status</h3>
+                    <p>A one-time $10 payment is required to verify your artist status.</p>
+                    <div class="payment-options">
+                        <button class="payment-option stripe-payment">
+                            <i class="fas fa-credit-card"></i>
+                            Credit Card
+                        </button>
+                        <button class="payment-option paypal-payment">
+                            <i class="fab fa-paypal"></i>
+                            PayPal
+                        </button>
+                    </div>
+                </div>
+                
+                <button class="primary-button" id="complete-profile" disabled>
+                    <i class="fas fa-check"></i>
+                    Complete Profile
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase configuration -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-storage-compat.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    <script type="module" src="firebase.js"></script>
+    <script>
+        // Initialize social links
+        let socialLinkCount = 1;
+        const addSocialBtn = document.querySelector('.add-social-btn');
+        const socialLinksContainer = document.querySelector('.social-links-container');
+
+        addSocialBtn.addEventListener('click', () => {
+            socialLinkCount++;
+            const newSocialLink = `
+                <div class="social-link">
+                    <select id="socialType${socialLinkCount}">
+                        <option value="">Select platform</option>
+                        <option value="instagram">Instagram</option>
+                        <option value="facebook">Facebook</option>
+                        <option value="twitter">Twitter</option>
+                        <option value="tiktok">TikTok</option>
+                        <option value="youtube">YouTube</option>
+                    </select>
+                    <input type="text" id="socialUrl${socialLinkCount}" placeholder="Username or URL">
+                    <button class="remove-social-btn">Remove</button>
+                </div>
+            `;
+            socialLinksContainer.insertAdjacentHTML('beforeend', newSocialLink);
+        });
+
+        // Handle social link removal
+        socialLinksContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-social-btn')) {
+                e.target.parentElement.remove();
+            }
+        });
+
+        // Initialize band members
+        let bandMemberCount = 1;
+        const addMemberBtn = document.querySelector('.add-member-btn');
+        const bandMembersContainer = document.querySelector('.band-members-container');
+
+        addMemberBtn.addEventListener('click', () => {
+            bandMemberCount++;
+            const newMember = `
+                <div class="band-member">
+                    <input type="text" placeholder="Member Name">
+                    <input type="text" placeholder="Role">
+                    <button class="remove-member-btn">Remove</button>
+                </div>
+            `;
+            bandMembersContainer.insertAdjacentHTML('beforeend', newMember);
+        });
+
+        // Handle band member removal
+        bandMembersContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-member-btn')) {
+                e.target.parentElement.remove();
+            }
+        });
+
+        // Initialize Stripe
+        const stripe = Stripe('your_stripe_publishable_key');
+        
+        // Handle profile picture upload
+        const profilePictureInput = document.getElementById('profile-picture');
+        const profilePreview = document.getElementById('profile-preview');
+        const uploadLabel = document.querySelector('.upload-label');
+
+        profilePictureInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                try {
+                    const storageRef = ref(firebase.storage, `profile-pictures/${firebase.auth.currentUser.uid}`);
+                    await uploadBytes(storageRef, file);
+                    const url = await getDownloadURL(storageRef);
+                    profilePreview.src = url;
+                    uploadLabel.textContent = 'Update Profile Picture';
+                } catch (error) {
+                    console.error('Error uploading profile picture:', error);
+                    alert('Failed to upload profile picture. Please try again.');
+                }
+            }
+        });
+
+        // Handle payment
+        const completeProfileBtn = document.getElementById('complete-profile');
+        const stripePaymentBtn = document.querySelector('.stripe-payment');
+        const paypalPaymentBtn = document.querySelector('.paypal-payment');
+
+        stripePaymentBtn.addEventListener('click', async () => {
+            try {
+                // Create payment intent
+                const paymentIntent = await fetch('/create-payment-intent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        amount: 1000, // $10 in cents
+                        currency: 'usd',
+                        userId: firebase.auth.currentUser.uid
+                    })
+                }).then(res => res.json());
+
+                // Handle payment
+                const { error } = await stripe.confirmCardPayment(paymentIntent.clientSecret);
+                
+                if (error) {
+                    throw error;
+                }
+
+                // Enable complete profile button
+                completeProfileBtn.disabled = false;
+                completeProfileBtn.style.backgroundColor = '#4CAF50';
+                completeProfileBtn.style.color = 'white';
+
+                alert('Payment successful! You can now complete your profile.');
+            } catch (error) {
+                console.error('Payment error:', error);
+                alert('Payment failed. Please try again.');
+            }
+        });
+
+        paypalPaymentBtn.addEventListener('click', () => {
+            window.location.href = 'https://paypal.com/donate?business=your_paypal_business_id&amount=10';
+        });
+
+        // Handle genre selection
+        const genreChips = document.querySelectorAll('.chip');
+        const selectedGenres = new Set();
+
+        genreChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                if (selectedGenres.has(chip.dataset.genre)) {
+                    chip.classList.remove('selected');
+                    selectedGenres.delete(chip.dataset.genre);
+                } else {
+                    chip.classList.add('selected');
+                    selectedGenres.add(chip.dataset.genre);
+                }
+            });
+        });
+
+        // Complete profile button
+        document.getElementById('complete-profile').addEventListener('click', async () => {
+            try {
+                // Check if payment has been made
+                if (completeProfileBtn.disabled) {
+                    alert('Please make the $10 verification payment first.');
+                    return;
+                }
+
+                // Get form data
+                const artistName = document.getElementById('artistName').value;
+                const bio = document.getElementById('bio').value;
+                const location = document.getElementById('location').value;
+                const website = document.getElementById('website').value;
+                const musicStyle = document.querySelector('input[name="musicStyle"]:checked')?.value;
+                const profilePicture = profilePreview.src;
+
+                // Get social links
+                const socialLinks = [];
+                document.querySelectorAll('.social-link').forEach(link => {
+                    const type = link.querySelector('select').value;
+                    const url = link.querySelector('input').value;
+                    if (type && url) {
+                        socialLinks.push({ type, url });
+                    }
+                });
+
+                // Get band members
+                const bandMembers = [];
+                document.querySelectorAll('.band-member').forEach(member => {
+                    const name = member.querySelector('input[placeholder="Member Name"]').value;
+                    const role = member.querySelector('input[placeholder="Role"]').value;
+                    if (name && role) {
+                        bandMembers.push({ name, role });
+                    }
+                });
+
+                // Get selected genres
+                genreChips.forEach(chip => {
+                    if (chip.classList.contains('selected')) {
+                        selectedGenres.add(chip.dataset.genre);
+                    }
+                });
+
+                // Update artist profile in Firestore
+                await updateDoc(doc(firebase.db, 'users', firebase.auth.currentUser.uid), {
+                    artistProfile: {
+                        artistName,
+                        bio,
+                        location,
+                        website,
+                        socialLinks,
+                        genres: Array.from(selectedGenres),
+                        musicStyle,
+                        bandMembers,
+                        verified: false,
+                        createdAt: new Date()
+                    }
+                });
+
+                // Redirect to artist dashboard
+                window.location.href = 'artist-dashboard.html';
+            } catch (error) {
+                console.error('Error completing profile:', error);
+                alert('Failed to complete profile. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>

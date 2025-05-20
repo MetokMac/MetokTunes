@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetokTunes - Withdraw Funds</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="screen">
+        <nav class="main-nav">
+            <div class="nav-left">
+                <a href="index.html" class="logo">
+                    <i class="fas fa-music"></i>
+                    <span>MetokTunes</span>
+                </a>
+            </div>
+            <div class="nav-right">
+                <button class="nav-button" onclick="window.history.back()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
+        </nav>
+
+        <main class="withdraw-container">
+            <h1>Withdraw Funds</h1>
+            <div class="withdraw-form">
+                <div class="balance-info">
+                    <div class="balance-card">
+                        <h3>Available Balance</h3>
+                        <p id="withdraw-balance">0 Tokens</p>
+                        <small>(100,000 tokens = $0.10)</small>
+                    </div>
+                    <div class="withdraw-methods">
+                        <h3>Withdrawal Methods</h3>
+                        <div class="method-options">
+                            <div class="method-option" id="paypal-option">
+                                <i class="fab fa-paypal"></i>
+                                <span>PayPal</span>
+                            </div>
+                            <div class="method-option" id="cashapp-option">
+                                <i class="fab fa-cashapp"></i>
+                                <span>CashApp</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <form id="withdraw-form">
+                    <div class="form-group">
+                        <label for="withdraw-amount">Tokens to Withdraw</label>
+                        <input type="number" id="withdraw-amount" min="100000" step="100000" required>
+                        <small>Available withdrawal amounts:</small>
+                        <ul class="withdrawal-amounts">
+                            <li>100,000 tokens = $0.10</li>
+                            <li>300,000 tokens = $0.30</li>
+                            <li>500,000 tokens = $0.50</li>
+                            <li>1,000,000 tokens = $1.00</li>
+                            <li>5,000,000 tokens = $5.00</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="form-group" id="paypal-details" style="display: none;">
+                        <label for="paypal-email">PayPal Email</label>
+                        <input type="email" id="paypal-email" required>
+                    </div>
+
+                    <div class="form-group" id="cashapp-details" style="display: none;">
+                        <label for="cashapp-id">CashApp Username</label>
+                        <input type="text" id="cashapp-id" required>
+                        <small>Enter your CashApp username (e.g., $username)</small>
+                    </div>
+
+                    <button type="submit" class="primary-button">
+                        <i class="fas fa-paper-plane"></i> Request Withdrawal
+                    </button>
+                    <div class="withdraw-method-info">
+                        <h4>Withdrawal Method Information</h4>
+                        <div class="method-info-item">
+                            <h5>PayPal</h5>
+                            <p>Processing time: 1-3 business days</p>
+                            <p>Fee: 1% of withdrawal amount (minimum $0.50)</p>
+                        </div>
+                        <div class="method-info-item">
+                            <h5>CashApp</h5>
+                            <p>Processing time: Instant</p>
+                            <p>Fee: 1% of withdrawal amount (minimum $0.50)</p>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="withdraw-info">
+                    <h3>Withdrawal Information</h3>
+                    <p>Minimum withdrawal amount: 100,000 tokens ($0.10)</p>
+                    <p>Processing time: 1-3 business days</p>
+                    <p>Withdrawal fees: 1% of withdrawal amount (minimum 1,000 tokens)</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="firebase.js"></script>
+    <script src="script.js"></script>
+    <script src="withdraw.js"></script>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetokTunes - Ad Revenue History</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div id="particles-js"></div>
+    <nav class="main-nav">
+        <div class="nav-left">
+            <a href="index.html" class="logo">
+                <i class="fas fa-music"></i>
+                <span>MetokTunes</span>
+            </a>
+        </div>
+        <div class="nav-right">
+            <button class="nav-button" onclick="openSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>Ad Revenue History</h3>
+            <button class="close-sidebar" onclick="closeSidebar()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidebar-content">
+            <div class="ad-revenue-summary">
+                <div class="summary-card">
+                    <h4>Total Ad Revenue</h4>
+                    <p id="total-revenue">0 Tokens</p>
+                    <small>(10,000 tokens = $0.01)</small>
+                </div>
+                <div class="summary-card">
+                    <h4>Available Balance</h4>
+                    <p id="available-balance">0 Tokens</p>
+                    <button id="withdraw-button" class="primary-button">
+                        <i class="fas fa-wallet"></i> Withdraw Tokens
+                    </button>
+                </div>
+                <div class="summary-card">
+                    <h4>Total Shared</h4>
+                    <p id="total-shared">0 Tokens</p>
+                </div>
+            </div>
+            <div class="withdrawal-history">
+                <h4>Recent Withdrawals</h4>
+                <div id="withdrawal-history-list">
+                    <!-- Withdrawal history will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="ad-revenue-history-container">
+            <h2>Ad Revenue History</h2>
+            <div class="filter-section">
+                <div class="filter-group">
+                    <label for="date-range">Date Range:</label>
+                    <select id="date-range">
+                        <option value="all">All Time</option>
+                        <option value="month">Last Month</option>
+                        <option value="year">Last Year</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="status">Status:</label>
+                    <select id="status">
+                        <option value="all">All</option>
+                        <option value="completed">Completed</option>
+                        <option value="pending">Pending</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="history-grid" id="history-grid">
+                <!-- History items will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase configuration -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    <script type="module" src="firebase.js"></script>
+    <script>
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Check if user is authenticated
+                if (!firebase.auth.currentUser) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // Initialize UI
+                await loadAdRevenueSummary();
+                await loadAdRevenueHistory();
+
+                // Add filter event listeners
+                document.getElementById('date-range').addEventListener('change', loadAdRevenueHistory);
+                document.getElementById('status').addEventListener('change', loadAdRevenueHistory);
+
+            } catch (error) {
+                console.error('Error initializing page:', error);
+                alert('Failed to load ad revenue history. Please try again.');
+            }
+        });
+
+        // Load ad revenue summary
+        async function loadAdRevenueSummary() {
+            try {
+                const currentUser = firebase.auth.currentUser;
+                const userDoc = await getDoc(doc(firebase.db, 'users', currentUser.uid));
+                const userData = userDoc.data();
+
+                document.getElementById('total-revenue').textContent = 
+                    `$${(userData.totalAdRevenue || 0).toFixed(2)}`;
+                document.getElementById('available-balance').textContent = 
+                    `$${(userData.adRevenue || 0).toFixed(2)}`;
+                document.getElementById('total-shared').textContent = 
+                    `$${(userData.sharedAdRevenue || 0).toFixed(2)}`;
+            } catch (error) {
+                console.error('Error loading ad revenue summary:', error);
+            }
+        }
+
+        // Load ad revenue history
+        async function loadAdRevenueHistory() {
+            try {
+                const currentUser = firebase.auth.currentUser;
+                const dateRange = document.getElementById('date-range').value;
+                const status = document.getElementById('status').value;
+
+                let q = query(
+                    collection(firebase.db, 'adRevenueShares'),
+                    where('userId', '==', currentUser.uid)
+                );
+
+                // Add date range filter
+                if (dateRange === 'month') {
+                    const startOfMonth = new Date();
+                    startOfMonth.setDate(1);
+                    startOfMonth.setHours(0, 0, 0, 0);
+                    q = query(q, where('timestamp', '>=', startOfMonth));
+                } else if (dateRange === 'year') {
+                    const startOfYear = new Date();
+                    startOfYear.setMonth(0);
+                    startOfYear.setDate(1);
+                    startOfYear.setHours(0, 0, 0, 0);
+                    q = query(q, where('timestamp', '>=', startOfYear));
+                }
+
+                // Add status filter
+                if (status !== 'all') {
+                    q = query(q, where('status', '==', status));
+                }
+
+                // Order by timestamp
+                q = query(q, orderBy('timestamp', 'desc'));
+
+                const sharesSnapshot = await getDocs(q);
+                const historyGrid = document.getElementById('history-grid');
+                historyGrid.innerHTML = '';
+
+                sharesSnapshot.forEach(doc => {
+                    const share = doc.data();
+                    const shareCard = createShareCard(share);
+                    historyGrid.appendChild(shareCard);
+                });
+
+                // Show no results message if empty
+                if (historyGrid.children.length === 0) {
+                    historyGrid.innerHTML = `
+                        <div class="no-results">
+                            <i class="fas fa-coins"></i>
+                            <p>No ad revenue shares found</p>
+                        </div>
+                    `;
+                }
+
+            } catch (error) {
+                console.error('Error loading ad revenue history:', error);
+                alert('Failed to load ad revenue history. Please try again.');
+            }
+        }
+
+        // Create share card
+        function createShareCard(share) {
+            const shareCard = document.createElement('div');
+            shareCard.className = 'share-card';
+            shareCard.innerHTML = `
+                <div class="share-info">
+                    <div class="share-details">
+                        <h4>Shared with ${share.artistName || 'Unknown Artist'}</h4>
+                        <p>Amount: $${share.amount.toFixed(2)}</p>
+                        <p>Status: <span class="status-${share.status}">${share.status}</span></p>
+                    </div>
+                    <div class="share-date">
+                        <i class="fas fa-calendar"></i>
+                        ${new Date(share.timestamp).toLocaleDateString()}
+                    </div>
+                </div>
+                <div class="share-actions">
+                    <button class="view-details" onclick="viewShareDetails('${doc.id}')">
+                        <i class="fas fa-info-circle"></i>
+                        Details
+                    </button>
+                </div>
+            `;
+            return shareCard;
+        }
+
+        // View share details
+        async function viewShareDetails(shareId) {
+            try {
+                const shareDoc = await getDoc(doc(firebase.db, 'adRevenueShares', shareId));
+                const share = shareDoc.data();
+
+                // Create and show details modal
+                const modal = document.createElement('div');
+                modal.className = 'details-modal';
+                modal.innerHTML = `
+                    <div class="details-content">
+                        <h3>Share Details</h3>
+                        <div class="details-info">
+                            <div class="detail-row">
+                                <label>Artist:</label>
+                                <span>${share.artistName || 'Unknown Artist'}</span>
+                            </div>
+                            <div class="detail-row">
+                                <label>Amount:</label>
+                                <span>$${share.amount.toFixed(2)}</span>
+                            </div>
+                            <div class="detail-row">
+                                <label>Date:</label>
+                                <span>${new Date(share.timestamp).toLocaleString()}</span>
+                            </div>
+                            <div class="detail-row">
+                                <label>Status:</label>
+                                <span class="status-${share.status}">${share.status}</span>
+                            </div>
+                            <div class="detail-row">
+                                <label>Transaction ID:</label>
+                                <span>${share.transactionId || 'N/A'}</span>
+                            </div>
+                        </div>
+                        <button class="close-modal">
+                            <i class="fas fa-times"></i>
+                            Close
+                        </button>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+
+                // Add close modal functionality
+                modal.querySelector('.close-modal').addEventListener('click', () => {
+                    modal.remove();
+                });
+
+            } catch (error) {
+                console.error('Error viewing share details:', error);
+                alert('Failed to load share details. Please try again.');
+            }
+        }
+
+        // Sidebar functions
+        function openSidebar() {
+            document.getElementById('sidebar').style.width = '250px';
+            document.getElementById('sidebar').style.display = 'block';
+        }
+
+        function closeSidebar() {
+            document.getElementById('sidebar').style.width = '0';
+            document.getElementById('sidebar').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

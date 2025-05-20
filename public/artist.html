@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artist Profile - MetokTunes</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div id="particles-js"></div>
+    <div class="artist-container">
+        <div class="artist-header">
+            <div class="artist-image">
+                <img src="https://via.placeholder.com/300" alt="Artist Image">
+            </div>
+            <div class="artist-info">
+                <h1 id="artist-name">Loading...</h1>
+                <p id="artist-genres" class="artist-genres">Loading...</p>
+                <div class="artist-actions">
+                    <button id="follow-button" class="primary-button">
+                        <i class="fas fa-user-plus"></i>
+                        Follow
+                    </button>
+                    <button id="donate-button" class="secondary-button" data-toggle="modal" data-target="#donateModal">
+                        <i class="fas fa-heart"></i>
+                        Donate Tokens
+                    </button>
+                    
+                    <!-- Donation Modal -->
+                    <div class="modal fade" id="donateModal" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Donate to Artist</h5>
+                                    <button type="button" class="close" data-dismiss="modal">
+                                        <span>&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="donation-amounts">
+                                        <button class="amount-btn" data-amount="100000">100,000 tokens ($0.10)</button>
+                                        <button class="amount-btn" data-amount="300000">300,000 tokens ($0.30)</button>
+                                        <button class="amount-btn" data-amount="500000">500,000 tokens ($0.50)</button>
+                                        <button class="amount-btn" data-amount="1000000">1,000,000 tokens ($1.00)</button>
+                                        <button class="amount-btn" data-amount="5000000">5,000,000 tokens ($5.00)</button>
+                                    </div>
+                                    <div class="custom-amount">
+                                        <label for="custom-amount">Custom Amount:</label>
+                                        <input type="number" id="custom-amount" min="100000" step="100000" placeholder="Enter tokens (100,000 = $0.10)">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-primary" id="confirm-donation">Donate</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="artist-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-play"></i>
+                        <span id="artist-streams">Loading...</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-heart"></i>
+                        <span id="artist-likes">Loading...</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-users"></i>
+                        <span id="artist-followers">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="artist-content">
+            <div class="artist-tabs">
+                <button class="tab-button active" data-tab="music">Music</button>
+                <button class="tab-button" data-tab="stats">Stats</button>
+                <button class="tab-button" data-tab="about">About</button>
+            </div>
+            
+            <div class="tab-content">
+                <div class="tab-pane active" id="music-tab">
+                    <div class="music-grid" id="artist-music-grid">
+                        <!-- Music will be populated here -->
+                    </div>
+                </div>
+                
+                <div class="tab-pane" id="stats-tab">
+                    <div class="stats-container">
+                        <div class="stats-chart">
+                            <canvas id="monthly-streams-chart"></canvas>
+                            <h3>Monthly Streams</h3>
+                        </div>
+                        <div class="stats-chart">
+                            <canvas id="top-songs-chart"></canvas>
+                            <h3>Top Songs</h3>
+                        </div>
+                        <div class="stats-chart">
+                            <canvas id="listener-distribution-chart"></canvas>
+                            <h3>Listener Distribution</h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-pane" id="about-tab">
+                    <div class="about-section">
+                        <div class="bio-section">
+                            <h2>About</h2>
+                            <p id="artist-bio">Loading...</p>
+                        </div>
+                        <div class="social-section">
+                            <h2>Connect</h2>
+                            <div class="social-links" id="artist-social-links">
+                                <!-- Social links will be populated here -->
+                            </div>
+                        </div>
+                        <div class="donation-section">
+                            <h2>Support</h2>
+                            <div class="donation-options">
+                                <div class="donation-amount">
+                                    <label for="donation-amount">Amount:</label>
+                                    <input type="number" id="donation-amount" min="1" step="0.01">
+                                </div>
+                                <div class="donation-methods">
+                                    <button class="donation-method stripe-payment">
+                                        <i class="fas fa-credit-card"></i>
+                                        Credit Card
+                                    </button>
+                                    <button class="donation-method paypal-payment">
+                                        <i class="fab fa-paypal"></i>
+                                        PayPal
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase configuration -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-storage-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    <script type="module" src="firebase.js"></script>
+    <script>
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            const artistProfile = JSON.parse(localStorage.getItem('artistProfile'));
+            
+            if (artistProfile && artistProfile.artistProfile) {
+                const artistData = artistProfile.artistProfile;
+                const userId = artistProfile.id;
+                
+                // Update artist info
+                document.getElementById('artist-name').textContent = artistData.artistName;
+                document.getElementById('artist-bio').textContent = artistData.bio;
+                document.getElementById('artist-image').src = artistData.profilePicture;
+                
+                // Update genres
+                const genres = artistData.genres.join(', ');
+                document.getElementById('artist-genres').textContent = genres;
+                
+                // Update stats
+                document.getElementById('artist-streams').textContent = artistData.streams || '0';
+                document.getElementById('artist-likes').textContent = artistData.likes || '0';
+                document.getElementById('artist-followers').textContent = artistData.followers || '0';
+
+                // Initialize follow button
+                const followButton = document.getElementById('follow-button');
+                initializeFollowButton(followButton, userId);
+
+                // Initialize donation system
+                const donateButton = document.getElementById('donate-button');
+                initializeDonationSystem(donateButton, userId);
+
+                // Initialize tabs
+                initializeTabs();
+
+                // Initialize charts
+                initializeCharts();
+
+                // Load artist's music
+                loadArtistMusic(userId);
+            }
+        });
+
+        // Follow/Unfollow functionality
+        async function initializeFollowButton(button, artistId) {
+            try {
+                const user = firebase.auth.currentUser;
+                if (!user) return;
+
+                // Check if user is already following
+                const followsRef = collection(firebase.db, 'follows');
+                const followQuery = query(followsRef, where('followerId', '==', user.uid), where('artistId', '==', artistId));
+                const followSnapshot = await getDocs(followQuery);
+                
+                if (!followSnapshot.empty) {
+                    button.textContent = 'Following';
+                    button.classList.add('following');
+                }
+
+                button.addEventListener('click', async () => {
+                    try {
+                        if (button.classList.contains('following')) {
+                            // Unfollow
+                            await deleteDoc(doc(firebase.db, 'follows', followSnapshot.docs[0].id));
+                            button.textContent = 'Follow';
+                            button.classList.remove('following');
+                            updateFollowCount(artistId, -1);
+                        } else {
+                            // Follow
+                            await addDoc(followsRef, {
+                                followerId: user.uid,
+                                artistId: artistId,
+                                timestamp: new Date()
+                            });
+                            button.textContent = 'Following';
+                            button.classList.add('following');
+                            updateFollowCount(artistId, 1);
+                        }
+                    } catch (error) {
+                        console.error('Error updating follow status:', error);
+                        alert('Failed to update follow status. Please try again.');
+                    }
+                });
+            } catch (error) {
+                console.error('Error initializing follow button:', error);
+            }
+        }
+
+        // Update follow count in artist's profile
+        async function updateFollowCount(artistId, change) {
+            try {
+                const artistRef = doc(firebase.db, 'users', artistId);
+                await updateDoc(artistRef, {
+                    artistProfile: {
+                        ...artistProfile.artistProfile,
+                        followers: increment(change)
+                    }
+                });
+            } catch (error) {
+                console.error('Error updating follow count:', error);
+            }
+        }
+
+        // Donation system
+        async function initializeDonationSystem(button, artistId) {
+            const donationAmount = document.getElementById('donation-amount');
+            const stripePaymentBtn = document.querySelector('.stripe-payment');
+            const paypalPaymentBtn = document.querySelector('.paypal-payment');
+
+            stripePaymentBtn.addEventListener('click', async () => {
+                const amount = parseFloat(donationAmount.value) * 100; // Convert to cents
+                if (isNaN(amount) || amount <= 0) {
+                    alert('Please enter a valid donation amount.');
+                    return;
+                }
+
+                try {
+                    const paymentIntent = await fetch('/create-payment-intent', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            amount,
+                            currency: 'usd',
+                            userId: artistId,
+                            type: 'donation'
+                        })
+                    }).then(res => res.json());
+
+                    const { error } = await stripe.confirmCardPayment(paymentIntent.clientSecret);
+                    
+                    if (error) {
+                        throw error;
+                    }
+
+                    // Update artist's total donations
+                    await updateDoc(doc(firebase.db, 'users', artistId), {
+                        artistProfile: {
+                            ...artistProfile.artistProfile,
+                            totalDonations: increment(amount / 100)
+                        }
+                    });
+
+                    alert('Thank you for your donation!');
+                } catch (error) {
+                    console.error('Donation error:', error);
+                    alert('Donation failed. Please try again.');
+                }
+            });
+
+            paypalPaymentBtn.addEventListener('click', () => {
+                const amount = parseFloat(donationAmount.value);
+                if (isNaN(amount) || amount <= 0) {
+                    alert('Please enter a valid donation amount.');
+                    return;
+                }
+                window.location.href = `https://paypal.com/donate?business=${artistData.paypalId}&amount=${amount}`;
+            });
+        }
+
+        // Tab functionality
+        function initializeTabs() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tab = button.dataset.tab;
+                    
+                    // Remove active class from all buttons
+                    tabButtons.forEach(b => b.classList.remove('active'));
+                    // Add active class to clicked button
+                    button.classList.add('active');
+
+                    // Hide all panes
+                    tabPanes.forEach(pane => pane.classList.remove('active'));
+                    // Show selected pane
+                    document.getElementById(`${tab}-tab`).classList.add('active');
+                });
+            });
+        }
+
+        // Chart functionality
+        function initializeCharts() {
+            const monthlyStreamsChart = document.getElementById('monthly-streams-chart');
+            const topSongsChart = document.getElementById('top-songs-chart');
+            const listenerDistributionChart = document.getElementById('listener-distribution-chart');
+
+            // Get artist's stats data
+            fetch(`/api/artist-stats/${artistProfile.id}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Initialize monthly streams chart
+                    new Chart(monthlyStreamsChart, {
+                        type: 'line',
+                        data: data.monthlyStreams,
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+
+                    // Initialize top songs chart
+                    new Chart(topSongsChart, {
+                        type: 'bar',
+                        data: data.topSongs,
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+
+                    // Initialize listener distribution chart
+                    new Chart(listenerDistributionChart, {
+                        type: 'pie',
+                        data: data.listenerDistribution,
+                        options: {
+                            responsive: true
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading charts:', error);
+                });
+        }
+
+        // Load artist's music
+        async function loadArtistMusic(artistId) {
+            const musicGrid = document.getElementById('artist-music-grid');
+            const musicRef = collection(firebase.db, 'music');
+            
+            try {
+                const querySnapshot = await getDocs(query(musicRef, where('artistId', '==', artistId)));
+                querySnapshot.forEach((doc) => {
+                    const song = doc.data();
+                    const songCard = document.createElement('div');
+                    songCard.className = 'music-card';
+                    songCard.innerHTML = `
+                        <img src="${song.coverArt}" alt="${song.title}">
+                        <div class="music-info">
+                            <h3>${song.title}</h3>
+                            <p>${song.album}</p>
+                        </div>
+                        <div class="music-actions">
+                            <button class="play-button">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button class="like-button">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                    `;
+                    
+                    // Add play functionality
+                    const playButton = songCard.querySelector('.play-button');
+                    playButton.addEventListener('click', () => {
+                        playSong(song);
+                    });
+
+                    // Add like functionality
+                    const likeButton = songCard.querySelector('.like-button');
+                    likeButton.addEventListener('click', () => {
+                        toggleLike(song.id);
+                    });
+
+                    musicGrid.appendChild(songCard);
+                });
+            } catch (error) {
+                console.error('Error loading artist music:', error);
+                musicGrid.innerHTML = '<p>Failed to load music. Please try again later.</p>';
+            }
+        }
+
+        // Play song functionality
+        function playSong(song) {
+            // Implement song playback logic
+            console.log('Playing song:', song.title);
+        }
+
+        // Like/unlike functionality
+        async function toggleLike(songId) {
+            try {
+                const user = firebase.auth.currentUser;
+                if (!user) return;
+
+                const likesRef = collection(firebase.db, 'likes');
+                const likeQuery = query(likesRef, where('userId', '==', user.uid), where('songId', '==', songId));
+                const likeSnapshot = await getDocs(likeQuery);
+
+                if (!likeSnapshot.empty) {
+                    // Remove like
+                    await deleteDoc(doc(firebase.db, 'likes', likeSnapshot.docs[0].id));
+                } else {
+                    // Add like
+                    await addDoc(likesRef, {
+                        userId: user.uid,
+                        songId: songId,
+                        timestamp: new Date()
+                    });
+                }
+            } catch (error) {
+                console.error('Error toggling like:', error);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,11 +1,10 @@
 // firebase-config.js
-const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
-};
+import firebaseConfig from './config.js';
+
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
+
+// Export the initialized app for use in other modules
+export const app = firebase.app();
+export const db = firebase.firestore();
+export const auth = firebase.auth();

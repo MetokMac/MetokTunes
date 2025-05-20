@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetokTunes Radio - Personalized Music Mix</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.css">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+</head>
+<body>
+    <nav class="bottom-nav">
+        <div class="nav-item">
+            <a href="index.html">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+        </div>
+        <div class="nav-item active">
+            <a href="radio.html">
+                <i class="fas fa-broadcast-tower"></i>
+                <span>Radio</span>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="library.html">
+                <i class="fas fa-music"></i>
+                <span>Library</span>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="artists.html">
+                <i class="fas fa-user"></i>
+                <span>Artists</span>
+            </a>
+        </div>
+    </nav>
+    <div class="radio-header">
+        <div class="header-content">
+            <h1>MetokTunes Radio</h1>
+            <div class="radio-intro">
+                <p>Discover new music based on your taste</p>
+                <p>Like songs to refine your mix</p>
+            </div>
+            <div class="radio-waveform">
+                <div class="now-playing">
+                    <div class="now-playing-info">
+                        <h2 id="current-song-title">Loading...</h2>
+                        <p class="artist-name" id="current-song-artist">Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="radio-container"></div>
+    <div class="floating-buttons">
+        <button class="floating-btn shuffle-btn">
+            <i class="fas fa-random"></i>
+        </button>
+        <button class="floating-btn repeat-btn">
+            <i class="fas fa-redo"></i>
+        </button>
+    </div>
+    <div class="radio-effects">
+        <div class="radio-spectrum"></div>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        // Initialize radio player
+        const player = new MusicPlayer();
+    </script>
+</body>
+</html>

@@ -1,4 +1,5 @@
-import MusicPlayer from './MusicPlayer.js';
+// Remove ES module import
+// MusicPlayer is now available through window.MusicPlayer
 import firebase from './firebase.js';
 import './withdraw.js';
 import './donation.js';
@@ -180,7 +181,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     firebase.initialize();
 
     // Initialize music player
-    const player = new MusicPlayer();
+    const player = window.MusicPlayer.getInstance();
 
     // Initialize PayPal
     paypal.Buttons({

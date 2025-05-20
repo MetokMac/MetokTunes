@@ -1,15 +1,29 @@
 :root {
-    --primary-color: #4CAF50;
-    --secondary-color: #2196F3;
+    --primary-color: #1DB954;
+    --secondary-color: #1ED760;
     --text-color: #FFFFFF;
-    --card-background: #212121;
-    --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    --border-radius: 8px;
-    --transition: all 0.3s ease;
-    --nav-height: 56px;
-    --shadow-color: rgba(0, 0, 0, 0.1);
-    --error-color: #FF5252;
-    --success-color: #4CAF50;
+    --text-secondary: #B3B3B3;
+    --text-disabled: #666666;
+    --background-primary: #000000;
+    --background-secondary: #121212;
+    --background-tertiary: #181818;
+    --card-background: #121212;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --border-radius: 16px;
+    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --nav-height: 64px;
+    --shadow-color: rgba(0, 0, 0, 0.2);
+    --error-color: #FF3B30;
+    --success-color: #34C759;
+    --accent-color: #E5004F;
+    --background-gradient: linear-gradient(135deg, #121212 0%, #181818 100%);
+    --glass-effect: rgba(29, 185, 84, 0.1);
+    --glass-border: 1px solid rgba(29, 185, 84, 0.1);
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
 }
 
 * {
@@ -19,10 +33,10 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     line-height: 1.6;
     color: var(--text-color);
-    background-color: #161616;
+    background: var(--background-gradient);
     margin: 0;
     padding: 0;
     min-height: 100vh;
@@ -30,6 +44,8 @@ body {
     flex-direction: column;
     position: relative;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 /* Login Screen Styles */
@@ -48,14 +64,542 @@ body {
 
 /* Screen Layout */
 .screen {
-    background-color: #161616;
+    background: var(--background-gradient);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px;
+    padding: var(--spacing-lg);
     box-sizing: border-box;
     width: 100%;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+/* Background Visual Effects */
+.screen::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(29, 185, 84, 0.1) 0%, transparent 50%);
+    opacity: 0;
+    animation: pulse 3s infinite;
+    z-index: 0;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.3;
+        transform: scale(1.2);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.4);
+    }
+}
+
+/* Card Animations */
+.playlist-card {
+    background: var(--card-background);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md);
+    transition: var(--transition), transform 0.25s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    border: var(--glass-border);
+    backdrop-filter: blur(8px);
+    box-shadow: var(--card-shadow);
+}
+
+.playlist-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(29, 185, 84, 0.1), transparent);
+    opacity: 0;
+    transform: translateX(-100%);
+    transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.playlist-card:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 16px var(--shadow-color);
+}
+
+.playlist-card:hover::before {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Music Player Animations */
+.play-pause-btn {
+    width: 48px;
+    height: 48px;
+    font-size: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    background: var(--glass-effect);
+    border-radius: 50%;
+    border: var(--glass-border);
+    backdrop-filter: blur(4px);
+    transition: var(--transition);
+}
+
+.play-pause-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: var(--primary-color);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease;
+}
+
+.play-pause-btn:hover::before {
+    width: 200%;
+    height: 200%;
+}
+
+/* Progress Bar Animation */
+.progress {
+    height: 100%;
+    background: var(--primary-color);
+    border-radius: 2px;
+    transition: width 0.3s linear;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: progressShine 2s infinite;
+}
+
+@keyframes progressShine {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Volume Slider Effects */
+.volume-slider input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    z-index: 1;
+}
+
+.volume-slider input[type="range"]::-webkit-slider-thumb::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: var(--primary-color);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease;
+}
+
+.volume-slider input[type="range"]:hover::-webkit-slider-thumb::before {
+    width: 20px;
+    height: 20px;
+}
+
+/* Navigation Drawer Effects */
+.nav-drawer {
+    background: var(--card-background);
+    width: 280px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.2);
+}
+
+.nav-drawer.active {
+    transform: translateX(0);
+}
+
+/* Navigation Item Hover Effects */
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 24px;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: var(--transition), background 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--primary-color);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+}
+
+.nav-item:hover::before {
+    transform: scaleX(1);
+}
+
+.nav-item:hover {
+    background: rgba(29, 185, 84, 0.1);
+    color: var(--text-color);
+}
+
+/* Loading Animation */
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+}
+
+.loading::before {
+    content: '';
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    border-top-color: var(--primary-color);
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Card Hover Effects */
+.playlist-card {
+    background: var(--card-background);
+    border-radius: var(--border-radius);
+    padding: 12px;
+    transition: var(--transition), transform 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+.playlist-card:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 16px var(--shadow-color);
+}
+
+.playlist-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+}
+
+.playlist-card:hover img {
+    transform: scale(1.05);
 }
 
 /* Rest of the styles will remain the same */
+
+/* Mobile Responsive Styles */
+@media screen and (max-width: 768px) {
+    /* Navigation */
+    .nav-bottom {
+        display: block;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--card-background);
+        box-shadow: 0 -2px 10px var(--shadow-color);
+        z-index: 1000;
+        padding: 0 16px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-bottom-container {
+        display: flex;
+        justify-content: space-around;
+        padding: 10px;
+    }
+
+    .nav-item {
+        flex: 1;
+        text-align: center;
+        padding: 10px;
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+    .nav-item.active {
+        color: var(--primary-color);
+    }
+
+    .nav-item:hover {
+        color: var(--primary-color);
+    }
+
+    .nav-item i {
+        font-size: 1.8rem;
+        margin-bottom: 4px;
+    }
+
+    .nav-item span {
+        font-size: 0.7rem;
+        font-weight: 600;
+    }
+
+    /* Main Content */
+    .dashboard-container {
+        padding: 10px;
+    }
+
+    .dashboard-sidebar {
+        display: none;
+    }
+
+    .dashboard-content {
+        width: 100%;
+        padding: 0;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    /* Forms */
+    .form-group {
+        margin: 10px 0;
+    }
+
+    input, select, textarea {
+        width: 100%;
+        padding: 10px;
+        border-radius: 4px;
+        border: 1px solid #333;
+    }
+
+    /* Music Player */
+    .music-player {
+        position: fixed;
+        bottom: 60px;
+        left: 0;
+        right: 0;
+        background: var(--card-background);
+        padding: 10px;
+        box-shadow: 0 -2px 10px var(--shadow-color);
+    }
+
+    .player-controls {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        margin: 10px 0;
+    }
+
+    .control-btn {
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 1.5rem;
+        padding: 10px;
+        cursor: pointer;
+    }
+
+    .player-info {
+        text-align: center;
+        margin: 10px 0;
+    }
+
+    /* Search Bar */
+    .search-bar {
+        padding: 10px;
+    }
+
+    .search-container {
+        display: flex;
+        gap: 10px;
+        width: 100%;
+    }
+
+    #search-input {
+        flex: 1;
+        padding: 10px;
+        border-radius: 20px;
+        border: 1px solid #333;
+        background: #212121;
+        color: #fff;
+    }
+
+    .search-btn {
+        padding: 10px 20px;
+        border-radius: 20px;
+        background: var(--primary-color);
+        border: none;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    /* Login Screen */
+    .login-container {
+        width: 90%;
+        max-width: 400px;
+        padding: 20px;
+        background: var(--card-background);
+        border-radius: var(--border-radius);
+        box-shadow: var(--card-shadow);
+        position: relative;
+        z-index: 1000;
+    }
+
+    .login-header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .login-options {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .guest-login-btn {
+        display: inline-block;
+        padding: 10px 20px;
+        background: #333;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+
+    /* Cards */
+    .card {
+        margin: 10px 0;
+    }
+
+    /* Charts */
+    .charts-container {
+        width: 100%;
+    }
+
+    .chart-card {
+        width: 100%;
+        margin: 10px 0;
+    }
+}
+
+/* Smaller screens */
+@media screen and (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .search-container {
+        flex-direction: column;
+    }
+
+    #search-input {
+        margin-bottom: 10px;
+    }
+
+    .player-controls {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .control-btn {
+        width: 100%;
+    }
+}
+
+/* Specific mobile styles */
+@media screen and (max-width: 320px) {
+    .nav-item span {
+        display: none;
+    }
+
+    .search-container {
+        padding: 5px;
+    }
+
+    .form-group label {
+        font-size: 0.8rem;
+    }
+
+    .stat-card {
+        padding: 10px;
+    }
+}
+
+/* Touch device specific styles */
+@media (hover: none) {
+    .nav-item:hover {
+        background: none;
+    }
+
+    .control-btn:hover {
+        background: none;
+    }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --primary-color: #4CAF50;
+        --secondary-color: #2196F3;
+        --text-color: #FFFFFF;
+        --card-background: #212121;
+        --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        --border-radius: 8px;
+        --transition: all 0.3s ease;
+        --nav-height: 56px;
+        --shadow-color: rgba(0, 0, 0, 0.1);
+        --error-color: #FF5252;
+        --success-color: #4CAF50;
+    }
+}

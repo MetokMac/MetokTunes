@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - MetokTunes</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="main-nav">
+        <div class="nav-left">
+            <a href="index.html" class="nav-logo">MetokTunes</a>
+        </div>
+        <div class="nav-right">
+            <button id="logout-btn" class="nav-btn">Logout</button>
+        </div>
+    </nav>
+
+    <main class="settings-container">
+        <div class="settings-section">
+            <h2>Account Settings</h2>
+            <div class="settings-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" readonly>
+                <button id="change-email" class="secondary-btn">Change Email</button>
+            </div>
+            <div class="settings-group">
+                <label for="password">Password</label>
+                <input type="password" id="current-password" placeholder="Enter current password">
+                <input type="password" id="new-password" placeholder="Enter new password">
+                <input type="password" id="confirm-password" placeholder="Confirm new password">
+                <button id="change-password" class="secondary-btn">Change Password</button>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h2>Music Player Settings</h2>
+            <div class="settings-group">
+                <label>
+                    <input type="checkbox" id="autoplay"> Auto Play
+                </label>
+            </div>
+            <div class="settings-group">
+                <label>
+                    <input type="checkbox" id="shuffle"> Shuffle
+                </label>
+            </div>
+            <div class="settings-group">
+                <label>
+                    <input type="checkbox" id="notifications"> Enable Notifications
+                </label>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h2>Token Settings</h2>
+            <div class="settings-group">
+                <p>Current Balance: <span id="token-balance">0</span> tokens</p>
+                <button id="withdraw-tokens" class="secondary-btn">Withdraw Tokens</button>
+            </div>
+            <div class="settings-group">
+                <p>Conversion Rate:</p>
+                <ul class="conversion-rates">
+                    <li>100,000 tokens = $0.10</li>
+                    <li>300,000 tokens = $0.30</li>
+                    <li>500,000 tokens = $0.50</li>
+                    <li>1,000,000 tokens = $1.00</li>
+                    <li>5,000,000 tokens = $5.00</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h2>App Settings</h2>
+            <div class="settings-group">
+                <label>
+                    <input type="checkbox" id="dark-mode"> Dark Mode
+                </label>
+            </div>
+            <div class="settings-group">
+                <label>
+                    <input type="checkbox" id="notifications"> Enable Push Notifications
+                </label>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h2>Privacy & Security</h2>
+            <div class="settings-group">
+                <button id="delete-account" class="danger-btn">Delete Account</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="firebase.js"></script>
+    <script src="script.js"></script>
+    <script src="settings.js"></script>
+</body>
+</html>

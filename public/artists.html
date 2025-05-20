@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetokTunes - Artists</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.css">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+</head>
+<body>
+    <div id="particles-js"></div>
+    <nav class="bottom-nav">
+        <div class="nav-item">
+            <a href="index.html">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="radio.html">
+                <i class="fas fa-broadcast-tower"></i>
+                <span>Radio</span>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="library.html">
+                <i class="fas fa-music"></i>
+                <span>Library</span>
+            </a>
+        </div>
+        <div class="nav-item active">
+            <a href="artists.html">
+                <i class="fas fa-user"></i>
+                <span>Artists</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="artists-container">
+        <div class="artists-header">
+            <h1>Artists & Genres</h1>
+            <div class="artists-actions">
+                <button class="primary-button" id="search-artists">
+                    <i class="fas fa-search"></i>
+                    Search Artists
+                </button>
+            </div>
+        </div>
+
+        <div class="genres-section">
+            <h2>Genres</h2>
+            <div class="genre-tags" id="genre-tags">
+                <!-- Genres will be populated dynamically -->
+            </div>
+        </div>
+
+        <div class="artists-grid" id="artists-grid">
+            <!-- Artists will be populated dynamically -->
+        </div>
+    </div>
+
+    <script type="module" src="MusicPlayer.js"></script>
+    <script type="module" src="script.js"></script>
+    <script>
+        // Add genre tags
+        const genres = ['Pop', 'Rock', 'Hip Hop', 'Electronic', 'Jazz', 'Classical', 'Country', 'R&B', 'Metal'];
+        const genreTags = document.getElementById('genre-tags');
+        
+        genres.forEach(genre => {
+            const tag = document.createElement('div');
+            tag.className = 'genre-tag';
+            tag.textContent = genre;
+            tag.onclick = () => filterArtistsByGenre(genre);
+            genreTags.appendChild(tag);
+        });
+
+        // Add sample artists
+        const sampleArtists = [
+            { 
+                id: 'artist-1', 
+                name: 'Taylor Swift', 
+                genre: 'Pop', 
+                image: 'https://via.placeholder.com/150', 
+                bio: 'Taylor Alison Swift is a multi-platinum, award-winning American singer-songwriter and pop culture icon.', 
+                streams: 1000000, 
+                likes: 500000,
+                verified: true
+            },
+            { 
+                id: 'artist-2', 
+                name: 'Led Zeppelin', 
+                genre: 'Rock', 
+                image: 'https://via.placeholder.com/150', 
+                bio: 'Led Zeppelin were a legendary British rock band known for their powerful sound and iconic songs like "Stairway to Heaven".', 
+                streams: 500000, 
+                likes: 200000,
+                verified: false
+            },
+            { 
+                id: 'artist-3', 
+                name: 'Drake', 
+                genre: 'Hip Hop', 
+                image: 'https://via.placeholder.com/150', 
+                bio: 'Aubrey Drake Graham, known simply as Drake, is a Canadian rapper, singer, songwriter, record producer, and actor.', 
+                streams: 2000000, 
+                likes: 1000000,
+                verified: true
+            },
+            { 
+                id: 'artist-4', 
+                name: 'Daft Punk', 
+                genre: 'Electronic', 
+                image: 'https://via.placeholder.com/150', 
+                bio: 'Daft Punk is a French electronic music duo composed of Guy-Manuel de Homem-Christo and Thomas Bangalter.', 
+                streams: 1500000, 
+                likes: 750000,
+                verified: false
+            }
+        ];
+
+        const artistsGrid = document.getElementById('artists-grid');
+        sampleArtists.forEach(artist => {
+            const artistCard = document.createElement('div');
+            artistCard.className = 'artist-card';
+
+            const artistInfo = document.createElement('div');
+            artistInfo.innerHTML = `
+                <div class="artist-header">
+                    <img src="${artist.image}" alt="${artist.name}">
+                    ${artist.verified ? `
+                        <div class="verification-badge">
+                            <i class="fas fa-check-circle"></i>
+                            Verified
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="artist-content">
+                    <h3>${artist.name}</h3>
+                    <p>${artist.genre}</p>
+                    <div class="artist-stats">
+                        <span><i class="fas fa-play"></i> ${artist.streams} plays</span>
+                        <span><i class="fas fa-heart"></i> ${artist.likes} likes</span>
+                    </div>
+                </div>
+            `;
+
+            const artistActions = document.createElement('div');
+            artistActions.className = 'artist-actions';
+            artistActions.innerHTML = `
+                <button class="primary-button" onclick="playArtist('${artist.id}')">
+                    <i class="fas fa-play"></i>
+                    Play
+                </button>
+                <button class="secondary-button" onclick="followArtist('${artist.id}')">
+                    <i class="fas fa-user-plus"></i>
+                    Follow
+                </button>
+                <button class="secondary-button donate-button" onclick="showDonateModal('${artist.id}')">
+                    <i class="fas fa-donate"></i>
+                    Support Artist
+                </button>
+            `;
+
+            const donateModal = document.createElement('div');
+            donateModal.className = 'donate-modal';
+            donateModal.id = `donate-modal-${artist.id}`;
+            donateModal.style.display = 'none';
+            donateModal.innerHTML = `
+                <div class="donate-modal-content">
+                    <h3>Support ${artist.name}</h3>
+                    <div class="donation-amounts">
+                        <button class="donation-amount" onclick="selectAmount('${artist.id}', 5)">$5</button>
+                        <button class="donation-amount" onclick="selectAmount('${artist.id}', 10)">$10</button>
+                        <button class="donation-amount" onclick="selectAmount('${artist.id}', 20)">$20</button>
+                        <button class="donation-amount" onclick="selectAmount('${artist.id}', 50)">$50</button>
+                        <div class="custom-amount">
+                            <label>Custom Amount:</label>
+                            <input type="number" id="custom-amount-${artist.id}" min="1" step="0.01">
+                        </div>
+                    </div>
+                    <div class="donation-methods">
+                        <div class="method-option">
+                            <input type="radio" id="paypal-${artist.id}" name="payment-method-${artist.id}" value="paypal">
+                            <label for="paypal-${artist.id}">
+                                <i class="fab fa-paypal"></i>
+                                PayPal
+                            </label>
+                        </div>
+                        <div class="method-option">
+                            <input type="radio" id="stripe-${artist.id}" name="payment-method-${artist.id}" value="stripe">
+                            <label for="stripe-${artist.id}">
+                                <i class="fas fa-credit-card"></i>
+                                Credit Card
+                            </label>
+                        </div>
+                        <div class="method-option">
+                            <input type="radio" id="ad-revenue-${artist.id}" name="payment-method-${artist.id}" value="ad-revenue">
+                            <label for="ad-revenue-${artist.id}">
+                                <i class="fas fa-coins"></i>
+                                Share Ad Revenue
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Ad Revenue Info -->
+                    <div class="ad-revenue-info" id="ad-revenue-info-${artist.id}" style="display: none;">
+                        <div class="ad-revenue-balance">
+                            <p>Your Available Ad Revenue: <span id="ad-revenue-amount-${artist.id}">$0.00</span></p>
+                        </div>
+                        <div class="ad-revenue-percentage">
+                            <label>Share percentage of your ad revenue:</label>
+                            <input type="range" min="1" max="100" value="50" id="ad-revenue-percentage-${artist.id}">
+                            <span id="ad-revenue-percentage-value-${artist.id}">50%</span>
+                        </div>
+                    </div>
+                    <button class="primary-button" onclick="processDonation('${artist.id}')">
+                        <i class="fas fa-check"></i>
+                        Donate
+                    </button>
+                    <button class="secondary-button" onclick="closeDonateModal('${artist.id}')">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+                </div>
+            `;
+
+            artistCard.appendChild(artistInfo);
+            artistCard.appendChild(artistActions);
+            artistCard.appendChild(donateModal);
+
+            artistsGrid.appendChild(artistCard);
+        });
+
+        function filterArtistsByGenre(genre) {
+            // This will be implemented with Firebase later
+            console.log(`Filtering by genre: ${genre}`);
+        }
+
+        // Donation functionality
+        async function showDonateModal(artistId) {
+            const modal = document.getElementById(`donate-modal-${artistId}`);
+            modal.style.display = 'block';
+            
+            // Initialize Stripe if not already initialized
+            if (!window.Stripe) {
+                const stripeScript = document.createElement('script');
+                stripeScript.src = 'https://js.stripe.com/v3/';
+                document.head.appendChild(stripeScript);
+            }
+
+            // Update ad revenue info if user is logged in
+            if (firebase.auth.currentUser) {
+                const currentUser = firebase.auth.currentUser;
+                const adRevenue = await firebase.getAdRevenue(currentUser.uid);
+                document.getElementById(`ad-revenue-amount-${artistId}`).textContent = 
+                    `$${adRevenue.toFixed(2)}`;
+            }
+        }
+
+        // Handle ad revenue percentage change
+        function updateAdRevenuePercentageValue(artistId) {
+            const percentage = document.getElementById(`ad-revenue-percentage-${artistId}`).value;
+            document.getElementById(`ad-revenue-percentage-value-${artistId}`).textContent = 
+                `${percentage}%`;
+        }
+
+        function closeDonateModal(artistId) {
+            const modal = document.getElementById(`donate-modal-${artistId}`);
+            modal.style.display = 'none';
+        }
+
+        function selectAmount(artistId, amount) {
+            document.getElementById(`custom-amount-${artistId}`).value = amount;
+        }
+
+        async function processDonation(artistId) {
+            try {
+                const amount = parseFloat(document.getElementById(`custom-amount-${artistId}`).value);
+                const paymentMethod = document.querySelector(`input[name='payment-method-${artistId}']:checked`).value;
+
+                if (!amount || isNaN(amount) || amount <= 0) {
+                    alert('Please enter a valid donation amount');
+                    return;
+                }
+
+                if (paymentMethod === 'stripe') {
+                    // Initialize Stripe
+                    const stripe = Stripe('your_stripe_publishable_key');
+                    
+                    // Create payment intent
+                    const paymentIntent = await fetch('/create-payment-intent', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            amount: amount * 100, // Convert to cents
+                            currency: 'usd',
+                            artistId: artistId
+                        })
+                    }).then(res => res.json());
+
+                    // Handle payment
+                    const { error } = await stripe.confirmCardPayment(paymentIntent.clientSecret);
+                    
+                    if (error) {
+                        throw error;
+                    }
+
+                    // Update artist's earnings in Firestore
+                    await updateDoc(doc(firebase.db, 'users', artistId), {
+                        earnings: increment(amount)
+                    });
+
+                    alert('Thank you for your support!');
+                    closeDonateModal(artistId);
+                } else if (paymentMethod === 'paypal') {
+                    // Handle PayPal integration
+                    window.location.href = `https://paypal.com/donate?business=${artistId}&amount=${amount}`;
+                } else if (paymentMethod === 'ad-revenue') {
+                    // Get current user's ad revenue
+                    const currentUser = firebase.auth.currentUser;
+                    const userAdRevenue = await firebase.getAdRevenue(currentUser.uid);
+                    
+                    // Get selected percentage
+                    const percentage = parseInt(document.getElementById(`ad-revenue-percentage-${artistId}`).value);
+                    const shareAmount = (userAdRevenue * percentage) / 100;
+
+                    if (shareAmount > userAdRevenue) {
+                        alert('Insufficient ad revenue available');
+                        return;
+                    }
+
+                    // Share ad revenue
+                    await firebase.shareAdRevenue(currentUser.uid, artistId, shareAmount);
+
+                    // Update UI
+                    document.getElementById(`ad-revenue-amount-${currentUser.uid}`).textContent = 
+                        `$${(userAdRevenue - shareAmount).toFixed(2)}`;
+
+                    alert(`Successfully shared ${percentage}% of your ad revenue with ${artist.name}!`);
+                    closeDonateModal(artistId);
+                }
+            } catch (error) {
+                console.error('Donation error:', error);
+                alert('Failed to process donation. Please try again.');
+            }
+        }
+
+        // Add event listeners
+        document.getElementById('search-artists').addEventListener('click', async () => {
+            const searchTerm = prompt('Enter artist name to search:');
+            if (searchTerm) {
+                try {
+                    const artists = await firebase.getArtists();
+                    const filteredArtists = artists.filter(artist => 
+                        artist.name.toLowerCase().includes(searchTerm.toLowerCase())
+                    );
+                    console.log('Search results:', filteredArtists);
+                } catch (error) {
+                    console.error('Error searching artists:', error);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

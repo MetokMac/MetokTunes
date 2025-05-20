@@ -1,5 +1,17 @@
-export class MusicPlayer {
+class MusicPlayer {
+    static instance = null;
+
+    static getInstance() {
+        if (!MusicPlayer.instance) {
+            MusicPlayer.instance = new MusicPlayer();
+        }
+        return MusicPlayer.instance;
+    }
+
     constructor() {
+        if (MusicPlayer.instance) {
+            throw new Error('MusicPlayer is a singleton. Use getInstance()');
+        }
         this.currentSongIndex = 0;
         this.songs = [];
         this.audio = new Audio();

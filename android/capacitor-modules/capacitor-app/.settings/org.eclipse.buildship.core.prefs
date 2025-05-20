@@ -1,0 +1,13 @@
+#Tue May 20 14:16:03 CDT 2025
+connection.java.home=/Applications/Android Studio.app/Contents/jbr/Contents/Home
+connection.java.home.windows=
+connection.jvmarguments=-Xmx2048m -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
+connection.name=capacitor-app
+connection.type=GRADLE
+connection.useGradleWrapper=true
+debug=false
+java.home=/Applications/Android Studio.app/Contents/jbr/Contents/Home
+java.home.windows=
+java.runtime.version=17.0.11+7-b1804.28
+org.eclipse.buildship.core.prefs=1.0
+version=1

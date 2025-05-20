@@ -1,0 +1,33 @@
+{
+  "appId": "com.metoktunes.app",
+  "appName": "MetokTunes",
+  "webDir": "www",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#ffffffff",
+      "androidSplashResourceName": "splash",
+      "androidSplashPortraitResourceName": "splash_portrait",
+      "androidSplashLandscapResourceName": "splash_landscape",
+      "androidSplashPortraitDarkResourceName": "splash_portrait",
+      "androidSplashLandscapDarkResourceName": "splash_landscape",
+      "iosSplashResourceName": "splash",
+      "iosSplashPortraitResourceName": "splash_portrait",
+      "iosSplashLandscapResourceName": "splash_landscape",
+      "iosSplashPortraitDarkResourceName": "splash_portrait",
+      "iosSplashLandscapDarkResourceName": "splash_landscape",
+      "showSpinner": false,
+      "androidSpinnerStyle": "large",
+      "spinnerColor": "#999999",
+      "resizeMode": "native",
+      "androidNativeDrawables": true,
+      "androidSplashPortrait": "splash_portrait",
+      "androidSplashLandscape": "splash_landscape",
+      "androidSplashPortraitDark": "splash_portrait_dark",
+      "androidSplashLandscapeDark": "splash_landscape_dark",
+      "imagePath": "resources/",
+      "android12": true
+    }
+  },
+  "bundledWebRuntime": false
+}

@@ -1,35 +1,59 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize withdrawal page
     initializeWithdrawPage();
 });
 
 function initializeWithdrawPage() {
     // Get DOM elements
-    const withdrawAmount = document.getElementById('withdraw-amount');
-    const paypalOption = document.getElementById('paypal-option');
-    const bankOption = document.getElementById('bank-option');
-    const paypalDetails = document.getElementById('paypal-details');
-    const bankDetails = document.getElementById('bank-details');
-    const withdrawForm = document.getElementById('withdraw-form');
-    const withdrawBalance = document.getElementById('withdraw-balance');
+    const withdrawAmount = document.querySelector('#withdraw-amount');
+    const paypalOption = document.querySelector('.method-option#paypal-option');
+    const cashappOption = document.querySelector('.method-option#cashapp-option');
+    const withdrawForm = document.querySelector('#withdraw-form');
+    const withdrawBalance = document.querySelector('#withdraw-balance');
+    const paypalDetails = document.querySelector('#paypal-details');
+    const cashappDetails = document.querySelector('#cashapp-details');
+
+    // Check if all required elements exist
+    if (!withdrawAmount || !paypalOption || !withdrawForm) {
+        console.error('One or more required elements not found in DOM');
+        return;
+    }
 
     // Load user's available balance
     loadAvailableBalance();
 
     // Handle withdrawal method selection
-    paypalOption.addEventListener('click', () => {
-        selectWithdrawMethod('paypal');
-    });
+    if (paypalOption) {
+        paypalOption.addEventListener('click', () => {
+            selectWithdrawMethod('paypal');
+        });
+    }
 
-    bankOption.addEventListener('click', () => {
-        selectWithdrawMethod('bank');
-    });
+    if (cashappOption) {
+        cashappOption.addEventListener('click', () => {
+            selectWithdrawMethod('cashapp');
+        });
+    }
 
     // Handle form submission
-    withdrawForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        await handleWithdrawal();
-    });
+    if (withdrawForm) {
+        withdrawForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await handleWithdrawal();
+        });
+    }
+
+    // Show/hide withdrawal methods
+    function showWithdrawMethod(method) {
+        if (paypalDetails) {
+            paypalDetails.style.display = method === 'paypal' ? 'block' : 'none';
+        }
+        if (cashappDetails) {
+            cashappDetails.style.display = method === 'cashapp' ? 'block' : 'none';
+        }
+    }
+
+    // Initialize with no method selected
+    showWithdrawMethod('');
 }
 
 function selectWithdrawMethod(method) {
