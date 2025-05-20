@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetokTunes - Sign Up</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div id="particles-js"></div>
+    <div class="login-container">
+        <div class="login-card">
+            <h1>Create Your Account</h1>
+            <div class="login-form">
+                <div class="account-type">
+                    <div class="account-type-option">
+                        <input type="radio" id="listener" name="accountType" value="listener" checked>
+                        <label for="listener">
+                            <i class="fas fa-headphones"></i>
+                            Listener
+                        </label>
+                    </div>
+                    <div class="account-type-option">
+                        <input type="radio" id="artist" name="accountType" value="artist">
+                        <label for="artist">
+                            <i class="fas fa-music"></i>
+                            Artist
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" placeholder="Enter your full name" required>
+                </div>
+                
+                <div id="artist-info" style="display: none;">
+                    <div class="form-group">
+                        <label for="artistName">Artist Name</label>
+                        <input type="text" id="artistName" placeholder="Enter your artist name">
+                    </div>
+                    <div class="form-group">
+                        <label for="genre">Main Genre</label>
+                        <select id="genre">
+                            <option value="">Select your main genre</option>
+                            <option value="pop">Pop</option>
+                            <option value="rock">Rock</option>
+                            <option value="hiphop">Hip Hop</option>
+                            <option value="electronic">Electronic</option>
+                            <option value="jazz">Jazz</option>
+                            <option value="country">Country</option>
+                            <option value="rnb">R&B</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter your password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" id="confirm-password" placeholder="Confirm your password" required>
+                </div>
+                <button class="primary-button" id="signup-btn">
+                    <i class="fas fa-user-plus"></i>
+                    Create Account
+                </button>
+                <div class="auth-options">
+                    <button class="secondary-button" id="google-btn">
+                        <i class="fab fa-google"></i>
+                        Sign up with Google
+                    </button>
+                </div>
+                <div class="back-to-login">
+                    <a href="login.html">Already have an account? Login here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase configuration -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-storage-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    <script type="module" src="firebase.js"></script>
+    <script>
+        // Update signup button
+        document.getElementById('signup-btn').addEventListener('click', async () => {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const accountType = document.querySelector('input[name="accountType"]:checked').value;
+            const artistName = document.getElementById('artistName').value;
+            const genre = document.getElementById('genre').value;
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+
+            try {
+                const userCredential = await firebase.signUp(email, password);
+                
+                // Create user profile in Firestore with account type
+                await setDoc(doc(firebase.db, 'users', userCredential.user.uid), {
+                    name: name,
+                    email: email,
+                    accountType: accountType,
+                    createdAt: new Date(),
+                    artistProfile: accountType === 'artist' ? {
+                        artistName: artistName || name,
+                        genre: genre,
+                        bio: '',
+                        profilePicture: '',
+                        verified: false
+                    } : null
+                });
+
+                // Redirect to appropriate page
+                if (accountType === 'artist') {
+                    window.location.href = 'artist-setup.html';
+                } else {
+                    window.location.href = 'index.html';
+                }
+            } catch (error) {
+                console.error('Signup error:', error);
+                alert('Signup failed. Please try again.');
+            }
+        });
+
+        // Toggle artist info visibility
+        document.querySelectorAll('input[name="accountType"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                const artistInfo = document.getElementById('artist-info');
+                artistInfo.style.display = radio.value === 'artist' ? 'block' : 'none';
+            });
+        });
+
+        // Update Google sign-up
+        document.getElementById('google-btn').addEventListener('click', async () => {
+            try {
+                const provider = new GoogleAuthProvider();
+                const result = await signInWithPopup(firebase.auth, provider);
+                // Create user profile in Firestore
+                await setDoc(doc(firebase.db, 'users', result.user.uid), {
+                    name: result.user.displayName,
+                    email: result.user.email,
+                    createdAt: new Date()
+                });
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Google sign-up error:', error);
+                alert('Google sign-up failed. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>

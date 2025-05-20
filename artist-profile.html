@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Artist Profile - MetokTunes</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="artist-profile.html">Profile</a></li>
+            <li><a href="search.html">Search</a></li>
+            <li><a href="playlists.html">Playlists</a></li>
+            <li><a href="login.html">Login</a></li>
+        </ul>
+    </nav>
+    <h1>Your Artist Profile</h1>
+    <div id="artist-info">
+        <h2 id="artist-name"></h2>
+        <p id="artist-genre"></p>
+    </div>
+    <div id="songs-list"></div>
+    <script src="script.js"></script>
+</body>
+</html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Artist Profile - MetokTunes</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="artist-profile.html">Profile</a></li>
+            <li><a href="search.html">Search</a></li>
+            <li><a href="playlists.html">Playlists</a></li>
+            <li><a href="login.html">Login</a></li>
+        </ul>
+    </nav>
+    <h1>Your Artist Profile</h1>
+    <div id="artist-info">
+        <h2 id="artist-name"></h2>
+        <p id="artist-genre"></p>
+    </div>
+    <div id="songs-list"></div>
+    <script src="script.js"></script>
+</body>
+</html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Artist Profile - MetokTunes</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="artist-profile.html">Profile</a></li>
+            <li><a href="search.html">Search</a></li>
+            <li><a href="playlists.html">Playlists</a></li>
+            <li><a href="login.html">Login</a></li>
+        </ul>
+    </nav>
+    <h1>Your Artist Profile</h1>
+    <div id="artist-info">
+        <h2 id="artist-name"></h2>
+        <p id="artist-genre"></p>
+    </div>
+    <div id="songs-list"></div>
+    <script src="script.js"></script>
+</body>
+</html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artist Profile</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Artist Profile</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="logout.html">Logout</a>
+        </nav>
+    </header>
+    <main>
+        <h2>Edit Your Profile</h2>
+        <label for="edit-artist-name">Artist Name:</label>
+        <input type="text" id="edit-artist-name" placeholder="Enter new artist name" />
+        <label for="edit-genre">Genre:</label>
+        <input type="text" id="edit-genre" placeholder="Enter new genre" />
+        <button id="edit-profile-button">Update Profile</button>
+        
+        <h2>Your Information</h2>
+        <p><strong>Name:</strong> <span id="artist-name"></span></p>
+        <p><strong>Genre:</strong> <span id="artist-genre"></span></p>
+
+        <section id="donation-section" style="display: none;">
+            <h2>Support Your Favorite Artist</h2>
+            <input type="number" id="donation-amount" placeholder="Enter donation amount">
+            <button id="donate-button">Donate</button>
+        </section>
+
+        <section id="upload-section" style="display: none;">
+            <h2>Upload Your Music</h2>
+            <input type="file" id="song-upload">
+            <button id="upload-button">Upload</button>
+        </section>
+
+        <h2>Your Uploaded Songs</h2>
+        <ul id="songs-list"></ul>
+
+        <button id="play-button">Play</button>
+<button id="pause-button">Pause</button>
+
+        <label for="volume-control">Volume:</label>
+        <input type="range" id="volume-control" min="0" max="1" step="0.01" value="1">
+        <progress id="track-progress" value="0" max="100"></progress>
+
+        <audio id="audio-player">
+            <source id="audio-source" src="" type="audio/mpeg">
+            Your browser does not support the audio tag.
+        </audio>
+
+        <script>
+            let currentSongIndex = 0;
+            const songs = []; // This will hold the song URLs
+
+            function playSong(songUrl) {
+                const audioPlayer = document.getElementById('audio-player');
+                const audioSource = document.getElementById('audio-source');
+                audioSource.src = songUrl;
+                audioPlayer.load();
+                audioPlayer.play();
+            }
+
+            function fetchUploadedSongs(artistId) {
+                const songsRef = firebase.firestore().collection('songs').where('artistId', '==', artistId);
+                songsRef.get().then((querySnapshot) => {
+                    const songsList = document.getElementById('songs-list');
+                    songsList.innerHTML = ''; // Clear existing list
+                    querySnapshot.forEach((doc) => {
+                        const songData = doc.data();
+                        const songItem = document.createElement('li');
+                        songItem.textContent = songData.songTitle; // Assuming songTitle is a field in your songs collection
+                        // Play button
+                        const playButton = document.createElement('button');
+                        playButton.textContent = 'Play';
+                        playButton.onclick = () => playSong(songData.songUrl); // Assuming songUrl is a field in your songs collection
+                        songItem.appendChild(playButton);
+                        songsList.appendChild(songItem);
+                    });
+                }).catch((error) => {
+                    console.error('Error fetching songs:', error);
+                });
+            }
+        </script>
+    </main>
+</body>
+</html>

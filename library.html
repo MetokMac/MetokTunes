@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetokTunes - Library</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.css">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+</head>
+<body>
+    <div id="particles-js"></div>
+    <nav class="bottom-nav">
+        <div class="nav-item">
+            <a href="index.html">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="radio.html">
+                <i class="fas fa-broadcast-tower"></i>
+                <span>Radio</span>
+            </a>
+        </div>
+        <div class="nav-item active">
+            <a href="library.html">
+                <i class="fas fa-music"></i>
+                <span>Library</span>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="discover.html">
+                <i class="fas fa-compass"></i>
+                <span>Discover</span>
+            </a>
+        </div>
+    </nav>
+    
+    <div class="library-container">
+        <div class="library-header">
+            <h1>My Library</h1>
+            <div class="library-actions">
+                <button class="primary-button" id="create-playlist">
+                    <i class="fas fa-plus"></i>
+                    New Playlist
+                </button>
+            </div>
+        </div>
+        
+        <div class="library-content">
+            <div class="playlists-section">
+                <h2>Playlists</h2>
+                <div id="playlists-list"></div>
+            </div>
+            
+            <div class="liked-songs-section">
+                <h2>Liked Songs</h2>
+                <div id="liked-songs-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="MusicPlayer.js"></script>
+    <script type="module" src="script.js"></script>
+</body>
+</html>

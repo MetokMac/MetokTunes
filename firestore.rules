@@ -1,0 +1,10 @@
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /songs/{song} {
+      allow read, write: if true; // Allow all reads and writes
+    }
+    match /users/{user} {
+      allow read, write: if true; // Allow all reads and writes
+    }
+  }
+}
